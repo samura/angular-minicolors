@@ -39,14 +39,15 @@
 
   });
 
-  angular.module('minicolors').directive('minicolors', ['minicolors', '$timeout', function(minicolors, $timeout) {
+  angular.module('minicolors').directive('minicolors', ['minicolors', '$timeout', '$parse', function(minicolors, $timeout, $parse) {
     return {
-      require: ['?ngModel', '?minicolorsOpacity'],
+      scope: {
+        ngModel: '=',
+        minicolorsOpacity: '='
+      },
       restrict: 'A',
       priority: 1, //since we bind on an input element, we have to set a higher priority than angular-default input
-      link: function(scope, element, attrs, controllers) {
-        var ngModel = controllers[0];
-        var minicolorsOpacity = controllers[1];
+      link: function(scope, element, attrs, ngModel) {
 
         var inititalized = false;
 
@@ -62,22 +63,28 @@
           //we are in digest or apply, and therefore call a timeout function
           $timeout(function() {
             var color = ngModel.$viewValue;
+            var opacity = scope.$eval(attrs.ngOpacity) || '1.0';
             element.minicolors('value', color);
+            element.minicolors('opacity', opacity);
           }, 0, false);
         };
 
         //init method
         var initMinicolors = function() {
 
-          if (!ngModel) {
+          if (!scope.ngModel) {
             return;
           }
           var settings = getSettings();
           settings.change = function(hex, opacity) {
             scope.$apply(function() {
-              ngModel.$setViewValue(hex);
-              if(settings.opacity) {
-                minicolorsOpacity = opacity;
+              scope.ngModel.$setViewValue(hex);
+              if (attrs.ngRgba) {
+                var rgba = element.minicolors('rgbaString');
+                $parse(attrs.ngRgba).assign(scope, rgba);
+              }
+              if (attrs.ngOpacity) {
+                $parse(attrs.ngOpacity).assign(scope, opacity);
               }
             });
           };
@@ -95,7 +102,7 @@
           //$scope.$apply will be called by $timeout, so we don't have to handle that case
           if (!inititalized) {
             $timeout(function() {
-              var color = ngModel.$viewValue;
+              var color = scope.ngModel.$viewValue;
               element.minicolors('value', color);
             }, 0);
             inititalized = true;

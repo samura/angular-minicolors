@@ -60,7 +60,7 @@
           //we are in digest or apply, and therefore call a timeout function
           $timeout(function() {
             var color = ngModel.$viewValue;
-            var opacity = scope.$eval(attrs.ngOpacity) || '1.0';
+            var opacity = scope.$eval(attrs.minicolorsOpacity) || '1.0';
             element.minicolors('value', color);
             element.minicolors('opacity', opacity);
           }, 0, false);
@@ -80,8 +80,8 @@
                 var rgba = element.minicolors('rgbaString');
                 $parse(attrs.ngRgba).assign(scope, rgba);
               }
-              if (attrs.ngOpacity) {
-                $parse(attrs.ngOpacity).assign(scope, opacity);
+              if (attrs.minicolorsOpacity) {
+                $parse(attrs.minicolorsOpacity).assign(scope, opacity);
               }
             });
           };
@@ -100,7 +100,9 @@
           if (!inititalized) {
             $timeout(function() {
               var color = ngModel.$viewValue;
+              var opacity = scope.$eval(attrs.minicolorsOpacity) || '1.0';
               element.minicolors('value', color);
+              element.minicolors('opacity', opacity);
             }, 0);
             inititalized = true;
             return;

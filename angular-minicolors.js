@@ -69,13 +69,13 @@
         //init method
         var initMinicolors = function() {
 
-          if (!scope.ngModel) {
+          if (!ngModel) {
             return;
           }
           var settings = getSettings();
           settings.change = function(hex, opacity) {
             scope.$apply(function() {
-              scope.ngModel.$setViewValue(hex);
+              ngModel.$setViewValue(hex);
               if (attrs.ngRgba) {
                 var rgba = element.minicolors('rgbaString');
                 $parse(attrs.ngRgba).assign(scope, rgba);
@@ -99,7 +99,7 @@
           //$scope.$apply will be called by $timeout, so we don't have to handle that case
           if (!inititalized) {
             $timeout(function() {
-              var color = scope.ngModel.$viewValue;
+              var color = ngModel.$viewValue;
               element.minicolors('value', color);
             }, 0);
             inititalized = true;

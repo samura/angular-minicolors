@@ -41,10 +41,12 @@
 
   angular.module('minicolors').directive('minicolors', ['minicolors', '$timeout', function(minicolors, $timeout) {
     return {
-      require: '?ngModel',
+      require: ['?ngModel', '?minicolorsOpacity'],
       restrict: 'A',
       priority: 1, //since we bind on an input element, we have to set a higher priority than angular-default input
-      link: function(scope, element, attrs, ngModel) {
+      link: function(scope, element, attrs, controllers) {
+        var ngModel = controllers[0];
+        var minicolorsOpacity = controllers[1];
 
         var inititalized = false;
 
@@ -71,9 +73,12 @@
             return;
           }
           var settings = getSettings();
-          settings.change = function(hex) {
+          settings.change = function(hex, opacity) {
             scope.$apply(function() {
               ngModel.$setViewValue(hex);
+              if(settings.opacity) {
+                minicolorsOpacity = opacity;
+              }
             });
           };
 

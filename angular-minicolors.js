@@ -41,10 +41,7 @@
 
   angular.module('minicolors').directive('minicolors', ['minicolors', '$timeout', '$parse', function(minicolors, $timeout, $parse) {
     return {
-      scope: {
-        ngModel: '=',
-        minicolorsOpacity: '='
-      },
+      require: '?ngModel',
       restrict: 'A',
       priority: 1, //since we bind on an input element, we have to set a higher priority than angular-default input
       link: function(scope, element, attrs, ngModel) {
